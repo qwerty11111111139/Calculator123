@@ -19,7 +19,7 @@ class MainActivity : AppCompatActivity() {
 
         tvResult = findViewById(R.id.tvResult)
 
-       )
+
         if (savedInstanceState != null) {
             val savedText = savedInstanceState.getString("CALC_STATE", "")
             tvResult.text = savedText
@@ -72,7 +72,8 @@ class MainActivity : AppCompatActivity() {
         val buttonsToAppend = listOf(
             R.id.btn0, R.id.btn1, R.id.btn2, R.id.btn3, R.id.btn4,
             R.id.btn5, R.id.btn6, R.id.btn7, R.id.btn8, R.id.btn9,
-            R.id.btnPlus, R.id.btnMinus, R.id.btnMultiply, R.id.btnDivide
+            R.id.btnPlus, R.id.btnMinus, R.id.btnMultiply, R.id.btnDivide,
+            R.id.btnPrecent
         )
 
         for (id in buttonsToAppend) {
@@ -84,20 +85,8 @@ class MainActivity : AppCompatActivity() {
         findViewById<Button>(R.id.btnClear).setOnClickListener {
             tvResult.text = ""
         }
-
-        findViewById<Button>(R.id.btnEquals).setOnClickListener {
-            try {
-                val result = evaluate(tvResult.text.toString())
-                if (result == result.toLong().toDouble()) {
-                    tvResult.text = String.format("%d", result.toLong())
-                } else {
-                    tvResult.text = String.format("%s", result)
-                }
-            } catch (e: Exception) {
-                tvResult.text = "Error"
-            }
-        }
     }
+
 
 
     private fun evaluate(str: String): Double {
@@ -120,6 +109,7 @@ class MainActivity : AppCompatActivity() {
                 if (ch in '0'.code..'9'.code || ch == '.'.code) {
                     while (ch in '0'.code..'9'.code || ch == '.'.code) nextChar()
                     x = str.substring(startPos, pos).toDouble()
+                    while (eat('%'.code)) x /= 100.0
                 } else throw RuntimeException("Unexpected: " + ch.toChar())
                 return x
             }
